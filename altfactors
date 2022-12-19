@@ -1,0 +1,12 @@
+#!/usr/bin/python3
+
+from sys import argv
+
+file = open(argv[1], 'r')
+for each in file:
+    num = int(each)
+    for x in range(2, num):
+        if num % x == 0:
+            y = int(num / x)
+            print(f"{num:d}={x:d}*{y:d}")
+            break

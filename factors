@@ -1,12 +1,47 @@
 #!/usr/bin/python3
+import random
+import sys
 
-from sys import argv
+def pollard_rho(n):
+    # Return a non-trivial factor of n using the Pollard-Rho algorithm
+    if n == 1:
+        return 1
 
-file = open(argv[1], 'r')
-for each in file:
-    num = int(each)
-    for x in range(2, num):
-        if num % x == 0:
-            y = int(num / x)
-            print(f"{num:d}={x:d}*{y:d}")
-            break
+    if n % 2 == 0:
+        return 2
+
+    x = random.randint(1, n - 1)
+    y = x
+    c = random.randint(1, n - 1)
+    g = 1
+
+    while g == 1:
+        x = ((x * x) % n + c) % n
+        y = ((y * y) % n + c) % n
+        y = ((y * y) % n + c) % n
+        g = gcd((x - y) % n, n)
+
+    if g == n:
+        return pollard_rho(n)
+    else:
+        return g
+
+def gcd(a, b):
+    # Return the greatest common divisor of a and b
+    while b:
+        a, b = b, a % b
+    return a
+
+def main():
+    # Read numbers from the input file and print their factors
+    with open(sys.argv[1], 'r') as f:
+        for line in f:
+            n = int(line.strip())
+            if n == 1:
+                continue
+            p = pollard_rho(n)
+            q = n // p
+            print(f'{n}={p}*{q}')
+
+if __name__ == '__main__':
+    main()
