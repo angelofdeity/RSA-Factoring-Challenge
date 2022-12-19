@@ -1,0 +1,30 @@
+#!/usr/bin/python3
+
+from math import sqrt
+from time import time
+from sys import argv
+
+st = time()
+file = open(argv[1], 'r')
+num = int(file.read())
+
+
+def prime(x):
+    for y in range(2, int(sqrt(x)) + 1):
+        if x % y == 0:
+            return 0
+    return x
+
+
+for x in reversed(range(2, int(sqrt(num)) + 1)):
+    if prime(x):
+        if num % x == 0:
+            y = int(num / x)
+        else:
+            continue
+        if prime(y):
+            print(f"{num:d}={x:d}*{y:d}")
+            et = time()
+            print(f"{et - st}seconds")
+            exit(0)
+exit(1)

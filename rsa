@@ -1,30 +1,57 @@
 #!/usr/bin/python3
+import random
+import sys
 
-from math import sqrt
-from time import time
-from sys import argv
+def pollard_rho_prime(n):
+    # Return a non-trivial prime factor of n using the Pollard-Rho algorithm
+    if n == 1:
+        return 1
 
-st = time()
-file = open(argv[1], 'r')
-num = int(file.read())
+    if n % 2 == 0:
+        return 2
 
+    x = random.randint(1, n - 1)
+    y = x
+    c = random.randint(1, n - 1)
+    g = 1
 
-def prime(x):
-    for y in range(2, int(sqrt(x)) + 1):
-        if x % y == 0:
-            return 0
-    return x
+    while g == 1:
+        x = ((x * x) % n + c) % n
+        y = ((y * y) % n + c) % n
+        y = ((y * y) % n + c) % n
+        g = gcd((x - y) % n, n)
 
-
-for x in reversed(range(2, int(sqrt(num)) + 1)):
-    if prime(x):
-        if num % x == 0:
-            y = int(num / x)
+    if g == n:
+        return pollard_rho_prime(n)
+    else:
+        if is_prime(g):
+            return g
         else:
-            continue
-        if prime(y):
-            print(f"{num:d}={x:d}*{y:d}")
-            et = time()
-            print(f"{et - st}seconds")
-            exit(0)
-exit(1)
+            return pollard_rho_prime(n // g)
+
+def gcd(a, b):
+    # Return the greatest common divisor of a and b
+    while b:
+        a, b = b, a % b
+    return a
+
+def is_prime(n):
+    # Return True if n is prime, False otherwise
+    if n < 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+
+def main():
+    # Read the number from the input file and print its prime factors
+    with open(sys.argv[1], 'r') as f:
+        n = int(f.read().strip())
+        p = pollard_rho_prime(n)
+        q = n // p
+        print(f'{n}={p}*{q}')
+
+if __name__ == '__main__':
+    main()
